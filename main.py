@@ -31,12 +31,19 @@ class PhishingNN():
 
     def build_model(self):
 
+        # model parameters
+        first_layer = 100
+        first_dropout = 0.2
+        second_layer = 200
+        second_dropout = 0.2
+
+
         self.model = Sequential()
 
-        self.model.add(Dense(100, activation='relu', input_shape=(48,)))
-        self.model.add(Dropout(0.2))
-        self.model.add(Dense(200, activation='relu'))
-        self.model.add(Dropout(0.2))
+        self.model.add(Dense(first_layer, activation='relu', input_shape=(48,)))
+        self.model.add(Dropout(first_dropout))
+        self.model.add(Dense(second_layer, activation='relu'))
+        self.model.add(Dropout(second_dropout))
         self.model.add(Dense(2, activation='softmax'))
 
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
@@ -45,6 +52,9 @@ if __name__ == '__main__':
 
     data: DataTool = DataTool('data/Phishing_Legitimate_full.csv')
     kfold = KFold(n_splits=5, shuffle=True)
+
+    # Fitting parameters
+    epochs = 10
 
     k_results = {
         'loss': [],
@@ -55,7 +65,7 @@ if __name__ == '__main__':
     for train, test in kfold.split(data.get_features(), data.get_labels()):
 
         model = PhishingNN().model
-        results = model.fit(data.get_features()[train], data.get_labels()[train], epochs=10)
+        results = model.fit(data.get_features()[train], data.get_labels()[train], epochs=epochs)
         eval = model.evaluate(data.get_features()[test], data.get_labels()[test], verbose=0)
 
         k_results['loss'].append(eval[0])
