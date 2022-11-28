@@ -7,10 +7,10 @@ from keras.layers import Dense, Dropout
 from sklearn.model_selection import KFold
 
 
-First_layer = 100
-First_dropout = 0.2
-Second_layer = 200
-Second_dropout = 0.2
+first_layer = 100
+first_dropout = 0.2
+second_layer = 200
+second_dropout = 0.2
 
 # Class with functions to help data modification
 class DataTool:
@@ -18,9 +18,6 @@ class DataTool:
 
         pd_file = pandas.read_csv(input_file)
         pd_file.pop("id")
-  										
-        
-
 
         self.data: Dict(str, np.ndarray) = {"labels": None, "features": None}
         self.data["labels"] = np.array(pd_file.pop("CLASS_LABEL"))
@@ -32,34 +29,26 @@ class DataTool:
     def get_features(self):
         return self.data["features"]
 
+def build_model():
+    # Dropout randomly sets input units to 0 with a frequency rate, this helps prevent overfitting.
+    # model parameters
 
-class PhishingNN:
-    def __init__(self) -> None:
-        self.build_model()
+    model = Sequential()
 
-    def build_model(self):
-        # Dropout randomly sets input units to 0 with a frequency rate, this helps prevent overfitting.
-        # model parameters
+    model.add(Dense(first_layer, activation="relu", input_shape=(48,)))
+    model.add(Dropout(first_dropout))
+    model.add(Dense(second_layer, activation="relu"))
+    model.add(Dropout(second_dropout))
 
-        first_layer = First_layer
-        first_dropout = First_dropout
-        second_layer = Second_layer
-        second_dropout = Second_dropout
+    model.add(Dense(2, activation="softmax"))
 
-        self.model = Sequential()
+    model.compile(
+        optimizer="adam",
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"],
+    )
 
-        self.model.add(Dense(first_layer, activation="relu", input_shape=(48,)))
-        self.model.add(Dropout(first_dropout))
-        self.model.add(Dense(second_layer, activation="relu"))
-        self.model.add(Dropout(second_dropout))
-
-        self.model.add(Dense(2, activation="softmax"))
-
-        self.model.compile(
-            optimizer="adam",
-            loss="sparse_categorical_crossentropy",
-            metrics=["accuracy"],
-        )
+    return model
 
 
 if __name__ == "__main__":
@@ -74,7 +63,7 @@ if __name__ == "__main__":
 
     for train, test in kfold.split(data.get_features(), data.get_labels()):
 
-        model = PhishingNN().model
+        model = build_model()
         results = model.fit(
             data.get_features()[train], data.get_labels()[train], epochs=epochs
         )
@@ -100,10 +89,10 @@ if __name__ == "__main__":
     axs.set_xlabel("epoch")
 
     text = f"""
-    First_layer    = {First_layer} 
-    First_dropout  = {First_dropout}
-    Second_layer   = {Second_layer} 
-    Second_dropout = {Second_dropout}
+    First_layer    = {first_layer}
+    First_dropout  = {first_dropout}
+    Second_layer   = {second_layer}
+    Second_dropout = {second_dropout}
     """
     plt.figtext(0.0, 0.0, text, ha="left")
     plt.subplots_adjust(bottom=0.2)
