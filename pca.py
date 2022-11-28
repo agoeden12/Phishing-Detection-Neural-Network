@@ -37,19 +37,27 @@ data: DataTool = DataTool('data/Phishing_Legitimate_full.csv')
 x = data.get_features()
 y = data.get_labels()
 
-x=x[:,[1,2,3,4,5,6,7,9,10,11,12,13,15,16,17,18,19,20,22,23,24,26,28,29,30,31,32,33,34,35,36,41,44,45,46,47]]
+#x=x[:,[1,2,3,4,5,6,7,9,10,11,12,13,15,16,17,18,19,20,22,23,24,26,28,29,30,31,32,33,34,35,36,41,44,45,46,47]]
+x=x[:,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47]]
 
 x = StandardScaler().fit_transform(x)
 
 
 
 
-pca = PCA(n_components=2)
+pca = PCA(n_components=47)
 
 principalComponents = pca.fit_transform(x)
 
-principalDf = pd.DataFrame(data = principalComponents, columns = ['principal component 1', 'principal component 2'])
-#principalDf = pd.DataFrame(data = principalComponents)
+#principalDf = pd.DataFrame(data = principalComponents, columns = ['principal component 1', 'principal component 2'])
+principalDf = pd.DataFrame(data = principalComponents)
+
+
+np.savetxt('pcaResults.csv',pca.explained_variance_ratio_)
+#print(pca.explained_variance_ratio_)
+
+
+
 
 labelDf = pd.DataFrame(y, columns=['target'])
 finalDf = pd.concat([principalDf, labelDf[['target']]], axis = 1)
@@ -65,10 +73,10 @@ targets = [1,0]
 colors = ['r', 'g']
 for target, color in zip(targets,colors):
     indicesToKeep = finalDf['target'] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-    #ax.scatter(finalDf.loc[indicesToKeep]
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               #, finalDf.loc[indicesToKeep]
+    #ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
+    ax.scatter(finalDf.loc[indicesToKeep]
+               #, finalDf.loc[indicesToKeep, 'principal component 2']
+               , finalDf.loc[indicesToKeep]
                , c = color
                , s = 1 )
 ax.legend(targets)
@@ -76,4 +84,7 @@ ax.grid()
 
 plt.show()
 
-pca.explained_variance_ratio_
+
+
+
+
