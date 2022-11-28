@@ -6,6 +6,12 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from sklearn.model_selection import KFold
 
+
+First_layer = 100
+First_dropout = 0.2
+Second_layer = 200
+Second_dropout = 0.2
+
 # Class with functions to help data modification
 class DataTool():
 
@@ -30,12 +36,13 @@ class PhishingNN():
         self.build_model()
 
     def build_model(self):
-
+        # Dropout randomly sets input units to 0 with a frequency rate, this helps prevent overfitting.
         # model parameters
-        first_layer = 100
-        first_dropout = 0.2
-        second_layer = 200
-        second_dropout = 0.2
+        
+        first_layer = First_layer 
+        first_dropout = First_dropout 
+        second_layer = Second_layer
+        second_dropout = Second_dropout
 
 
         self.model = Sequential()
@@ -84,4 +91,23 @@ if __name__ == '__main__':
     axs.set_title('model accuracy')
     axs.set_ylabel('accuracy')
     axs.set_xlabel('epoch')
+    #First_layer  
+    #First_dropout 
+    #Second_layer 
+    #Second_dropout
+    text = f"""
+    First_layer    = {First_layer} 
+    First_dropout  = {First_dropout}
+    Second_layer   = {Second_layer} 
+    Second_dropout = {Second_dropout}
+    """
+    plt.figtext(0.0,0.0,text, ha="left")
+    plt.subplots_adjust(bottom=.2)
+    #plt.figtext(0,-0.05,f"First_dropout  {    First_dropout }", ha="left")
+    #plt.figtext(0,-0.10,f"Second_layer   {    Second_layer } ", ha="left")
+    #plt.figtext(0,-0.15,f"Second_dropout {    Second_dropout}", ha="left")
+
+
+
+
     plt.show()
